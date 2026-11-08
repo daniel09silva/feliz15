@@ -1,0 +1,906 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>La Botica de los 15</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Shippori+Mincho+B1:wght@500;700;800&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<style>
+/* Layout: noche en el Palacio Interior. Una columna central de 1080px; cada sección es un objeto de la botica
+   (expediente médico, gabinete de hierbas, rollos colgantes, carta en papel de líneas rojas, cuenta regresiva). */
+:root{
+  --night:#0d1a19;
+  --night-2:#14302b;
+  --jade:#4f9a7c;
+  --jade-soft:#a9d8bf;
+  --lacquer:#b8392c;
+  --lacquer-deep:#7e2219;
+  --gold:#e4bb6a;
+  --gold-soft:rgba(228,187,106,.28);
+  --paper:#f2e8d0;
+  --paper-2:#e4d3ad;
+  --ink:#2b2119;
+  --ink-soft:#64513f;
+  --wood:#42251a;
+  --wood-2:#6b3f26;
+  --text:#f0e7d4;
+  --muted:#b7c4b9;
+  --f-display:"Shippori Mincho B1","Songti SC","Noto Serif",Georgia,serif;
+  --f-body:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Segoe UI",system-ui,sans-serif;
+  --f-brush:"Ma Shan Zheng","STKaiti","KaiTi","Kaiti SC",serif;
+  --step-0:1.0625rem;
+  --step-1:1.25rem;
+  --step-2:clamp(1.6rem,3.2vw,2.3rem);
+  --step-3:clamp(2.4rem,7vw,5rem);
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--night);color:var(--text);
+  font-family:var(--f-body);font-size:var(--step-0);line-height:1.7;
+  overflow-x:hidden;-webkit-tap-highlight-color:transparent;
+}
+img{max-width:100%;display:block}
+button,input{font:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
+
+/* Cielo fijo */
+.cielo{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(circle at 84% 9%, rgba(255,236,190,.95) 0 34px, rgba(255,226,160,.25) 36px, rgba(228,187,106,.10) 120px, transparent 260px),
+    radial-gradient(ellipse at 10% 110%, rgba(79,154,124,.22), transparent 55%),
+    linear-gradient(180deg, #0a1514 0%, var(--night) 45%, var(--night-2) 100%);
+}
+#sky,#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+#sky{z-index:0}
+#fx{z-index:90}
+
+.wrap{position:relative;z-index:1;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+.col{max-width:1080px;margin-inline:auto}
+section{padding-block:clamp(56px,9vw,112px)}
+
+/* Encabezados de sección */
+.head{display:grid;gap:10px;margin-bottom:clamp(28px,4vw,44px);max-width:640px}
+.eyebrow{display:flex;align-items:baseline;gap:12px;margin:0;
+  font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.eyebrow .cjk{font-family:var(--f-brush);font-size:1.5rem;letter-spacing:.05em;text-transform:none;color:var(--lacquer)}
+h1,h2,h3{font-family:var(--f-display);font-weight:800;text-wrap:balance;margin:0;line-height:1.15}
+h2{font-size:var(--step-2)}
+.head p{margin:0;color:var(--muted)}
+
+/* ---------- Hero ---------- */
+.hero{padding-block:clamp(40px,8vw,96px) clamp(48px,7vw,88px)}
+.hero .col{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(28px,5vw,64px);align-items:center;position:relative}
+.hero-text{min-width:0;display:grid;gap:22px}
+h1{font-size:var(--step-3);line-height:1.02;letter-spacing:-.01em}
+h1 .a{display:block;color:var(--text)}
+h1 .b{display:block;color:var(--gold);overflow-wrap:anywhere;font-weight:700;
+  text-shadow:0 0 28px rgba(228,187,106,.35)}
+.lede{margin:0;max-width:34em;font-size:var(--step-1);line-height:1.6;color:var(--muted)}
+.acciones{display:flex;flex-wrap:wrap;gap:12px;margin-top:4px}
+.btn{appearance:none;border:0;cursor:pointer;border-radius:999px;padding:13px 22px;font-weight:700;
+  transition:transform .18s ease, background-color .18s ease, box-shadow .18s ease}
+.btn:active{transform:scale(.97)}
+.btn-main{background:var(--lacquer);color:var(--paper);box-shadow:0 8px 24px -10px rgba(184,57,44,.9)}
+.btn-main:hover{background:#c8463a}
+.btn-ghost{background:transparent;color:var(--text);box-shadow:inset 0 0 0 1.5px var(--gold-soft)}
+.btn-ghost:hover{box-shadow:inset 0 0 0 1.5px var(--gold)}
+
+.puerta{position:relative;justify-self:center;width:min(100%,400px)}
+.luna{aspect-ratio:1;max-width:100%;border-radius:50%;padding:12px;
+  background:conic-gradient(from 0deg, var(--gold), #a37a35, var(--gold), #a37a35, var(--gold));
+  box-shadow:0 0 0 8px var(--lacquer-deep), 0 0 0 10px var(--gold-soft), 0 30px 80px -20px rgba(0,0,0,.8), 0 0 90px -10px rgba(228,187,106,.35)}
+.luna img{width:100%;height:100%;object-fit:cover;border-radius:50%;border:3px solid var(--night)}
+.sello{position:absolute;left:-6%;bottom:2%;width:clamp(72px,9vw,96px);aspect-ratio:1;
+  display:grid;place-items:center;background:var(--lacquer);color:var(--paper);border-radius:10px;
+  font-family:var(--f-brush);font-size:clamp(1.9rem,3.4vw,2.6rem);line-height:.9;writing-mode:vertical-rl;
+  transform:rotate(-8deg);box-shadow:0 10px 26px -8px rgba(0,0,0,.7), inset 0 0 0 3px rgba(242,232,208,.35)}
+.vertical{position:absolute;right:-8px;top:0;writing-mode:vertical-rl;font-family:var(--f-brush);
+  font-size:1.6rem;letter-spacing:.3em;color:var(--gold);opacity:.75}
+
+/* ---------- Expediente ---------- */
+.papel{background-color:var(--paper);color:var(--ink);
+  background-image:
+    radial-gradient(rgba(120,90,50,.07) 1px, transparent 1.2px),
+    linear-gradient(160deg, rgba(255,255,255,.35), transparent 40%, rgba(160,120,60,.12));
+  background-size:5px 5px, 100% 100%;
+  box-shadow:0 30px 60px -28px rgba(0,0,0,.85)}
+.expediente{position:relative;max-width:780px;padding:clamp(22px,4vw,44px);border-radius:4px;transform:rotate(-.6deg)}
+.exp-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;
+  padding-bottom:14px;margin-bottom:18px;border-bottom:2px solid var(--ink)}
+.exp-top h3{font-size:var(--step-1)}
+.exp-top span{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.exp-dl{display:grid;grid-template-columns:10.5rem 1fr;margin:0}
+.exp-dl dt,.exp-dl dd{padding-block:11px;border-bottom:1px dashed rgba(43,33,25,.25);margin:0}
+.exp-dl dt{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);padding-top:14px}
+.exp-dl dd{font-family:var(--f-display);font-weight:500;font-size:1.05rem;min-width:0;padding-right:clamp(0px,14vw,150px)}
+.exp-dl dd strong{font-weight:800;color:var(--lacquer-deep)}
+.firma{display:grid;justify-items:end;gap:0;margin:18px 0 0;font-family:var(--f-display);font-style:italic;color:var(--ink-soft);text-align:right}
+.firma-cjk{font-family:var(--f-brush);font-style:normal;font-size:2.2rem;line-height:1.1;color:var(--lacquer-deep)}
+.estampa{position:absolute;top:clamp(70px,10vw,96px);right:clamp(14px,4vw,40px);width:112px;aspect-ratio:1;
+  display:grid;grid-template-columns:1fr 1fr;place-items:center;padding:8px;
+  border:4px solid var(--lacquer);border-radius:8px;color:var(--lacquer);
+  font-family:var(--f-brush);font-size:2rem;line-height:1;transform:rotate(9deg);opacity:.86;
+  mix-blend-mode:multiply}
+.estampa small{grid-column:1/-1;font-family:var(--f-body);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
+
+/* ---------- Gabinete ---------- */
+.botica{display:grid;grid-template-columns:1.3fr 1fr;gap:clamp(20px,3vw,36px);align-items:start}
+.mueble{min-width:0;background:linear-gradient(180deg,var(--wood-2),var(--wood));padding:12px;border-radius:8px;
+  box-shadow:0 0 0 2px #2a170f, 0 34px 70px -30px rgba(0,0,0,.9)}
+.corona{display:flex;justify-content:space-between;align-items:center;padding:4px 8px 12px;color:var(--gold)}
+.corona .cjk{font-family:var(--f-brush);font-size:1.5rem}
+.contador{font-size:.82rem;letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.cajones{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.cajon{position:relative;appearance:none;cursor:pointer;border:0;border-radius:4px;padding:10px 6px 22px;
+  aspect-ratio:1/1.02;max-width:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;
+  color:var(--ink);
+  background:
+    repeating-linear-gradient(92deg, rgba(0,0,0,.07) 0 2px, transparent 2px 9px),
+    linear-gradient(180deg,#8a5634,#6d3f24);
+  box-shadow:inset 0 2px 0 rgba(255,220,170,.18), inset 0 -3px 0 rgba(0,0,0,.35), 0 2px 0 #24130c;
+  transition:transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease, filter .2s ease}
+.cajon:hover{filter:brightness(1.1);transform:translateY(-2px)}
+.cajon .etq{background:var(--paper);border-radius:2px;padding:4px 6px 3px;width:84%;text-align:center;
+  box-shadow:0 1px 0 rgba(0,0,0,.25)}
+.cajon .hz{display:block;font-family:var(--f-brush);font-size:clamp(1.05rem,2.3vw,1.45rem);line-height:1.1}
+.cajon .nm{display:block;font-size:clamp(.56rem,1.1vw,.66rem);line-height:1.25;color:var(--ink-soft);font-weight:700}
+.cajon::after{content:"";position:absolute;left:50%;bottom:7px;width:15px;height:11px;margin-left:-7.5px;
+  border:2.5px solid var(--gold);border-top:0;border-radius:0 0 10px 10px;opacity:.9}
+.cajon[aria-pressed="true"]{transform:translateY(3px) scale(.965);filter:brightness(.82);
+  box-shadow:inset 0 6px 14px rgba(0,0,0,.55), 0 0 0 #24130c}
+.cajon[aria-pressed="true"] .etq{background:#f6d9c9}
+.cajon[aria-pressed="true"] .hz{color:var(--lacquer-deep)}
+.cajon.actual{box-shadow:0 0 0 2px var(--gold), inset 0 6px 14px rgba(0,0,0,.45)}
+
+.receta{min-width:0;position:relative;padding:clamp(22px,3vw,32px);border-radius:4px;display:grid;gap:12px}
+.receta .grande{font-family:var(--f-brush);font-size:clamp(3.2rem,7vw,4.6rem);line-height:1;color:var(--lacquer)}
+.receta h3{font-size:var(--step-2)}
+.receta .prop{margin:0;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);font-weight:700}
+.receta .deseo{margin:0;font-family:var(--f-display);font-size:1.18rem;line-height:1.55;font-weight:500}
+.receta .nota{margin:6px 0 0;padding-top:12px;border-top:1px dashed rgba(43,33,25,.3);font-size:.85rem;color:var(--ink-soft)}
+.barra{display:grid;grid-template-columns:repeat(15,1fr);gap:3px;margin-top:2px}
+.barra i{height:6px;border-radius:2px;background:rgba(43,33,25,.15)}
+.barra i.on{background:var(--lacquer)}
+.receta.completa{box-shadow:0 0 0 3px var(--gold), 0 30px 60px -28px rgba(0,0,0,.85)}
+
+/* ---------- Rollos ---------- */
+.rollos{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(18px,2.6vw,30px);align-items:start}
+.rollo{margin:0;position:relative;padding:22px 12px 14px;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.rollo:nth-child(odd){transform:rotate(-1.4deg)}
+.rollo:nth-child(even){transform:rotate(1.2deg) translateY(18px)}
+.rollo:hover{transform:rotate(0) translateY(-4px)}
+.rollo::before{content:"";position:absolute;left:-10px;right:-10px;top:0;height:12px;border-radius:6px;
+  background:linear-gradient(180deg,#7a4a2c,#3a2014);box-shadow:0 3px 6px rgba(0,0,0,.5)}
+.rollo::after{content:"";position:absolute;left:50%;top:-26px;width:44%;height:28px;margin-left:-22%;
+  border:1.5px solid var(--gold-soft);border-bottom:0;border-radius:50% 50% 0 0 / 100% 100% 0 0}
+.rollo img{aspect-ratio:1;width:100%;height:auto;object-fit:cover;border:1px solid rgba(43,33,25,.4)}
+.rollo figcaption{padding-top:12px;font-family:var(--f-display);font-weight:700;font-size:.96rem;line-height:1.4;color:var(--ink)}
+
+/* ---------- Carta ---------- */
+.carta{max-width:720px;margin-inline:auto;padding:clamp(26px,5vw,56px) clamp(22px,5vw,60px);border-radius:3px;
+  --lh:2.05rem;
+  background-image:
+    repeating-linear-gradient(180deg, transparent 0 calc(var(--lh) - 1px), rgba(184,57,44,.32) calc(var(--lh) - 1px) var(--lh)),
+    radial-gradient(rgba(120,90,50,.07) 1px, transparent 1.2px);
+  background-size:100% var(--lh), 5px 5px;
+  background-position:0 calc(clamp(26px,5vw,56px) + 6px), 0 0;
+  border-left:6px double var(--lacquer)}
+.carta p{margin:0 0 var(--lh);font-family:var(--f-display);font-weight:500;font-size:1.1rem;line-height:var(--lh);max-width:60ch}
+.carta .saludo{font-weight:800}
+.carta .despedida{margin-bottom:0;text-align:right}
+.carta .despedida strong{display:block;font-family:var(--f-brush);font-weight:400;font-size:1.7rem;color:var(--lacquer-deep)}
+
+/* ---------- Cuenta regresiva ---------- */
+.reloj{max-width:860px;margin-inline:auto;display:grid;gap:clamp(22px,3.4vw,32px);justify-items:center;text-align:center}
+.reloj-fecha{margin:0;display:flex;align-items:baseline;justify-content:center;flex-wrap:wrap;gap:6px 14px;
+  font-family:var(--f-display);font-weight:700;font-size:var(--step-1);color:var(--text)}
+.reloj-fecha .cjk{font-family:var(--f-brush);font-weight:400;font-size:1.6rem;color:var(--gold)}
+.placas{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(10px,2vw,22px);width:100%;padding-top:16px}
+.placa{position:relative;min-width:0;display:grid;justify-items:center;gap:6px;
+  padding:clamp(18px,3vw,28px) 6px clamp(14px,2.4vw,20px);border-radius:8px;
+  background:linear-gradient(180deg,#9a2e22,var(--lacquer-deep));
+  box-shadow:inset 0 0 0 2px rgba(228,187,106,.6), inset 0 0 0 7px #7e2219, inset 0 0 0 8px rgba(228,187,106,.3), 0 24px 40px -22px rgba(0,0,0,.9)}
+.placa::before{content:"";position:absolute;left:50%;top:-16px;width:2px;height:16px;margin-left:-1px;background:rgba(228,187,106,.6)}
+.placa::after{content:"";position:absolute;left:50%;top:-20px;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:var(--gold)}
+.placa .hz{font-family:var(--f-brush);font-size:clamp(1.3rem,3vw,1.7rem);line-height:1;color:var(--gold)}
+.placa .num{display:block;font-family:var(--f-display);font-weight:800;font-size:clamp(2.2rem,8vw,4.6rem);line-height:1;color:var(--paper);
+  font-variant-numeric:tabular-nums;text-shadow:0 2px 0 rgba(0,0,0,.35)}
+.placa .num.tic{animation:tic .4s cubic-bezier(.2,.8,.2,1)}
+@keyframes tic{from{transform:translateY(-8px);opacity:.35}}
+.placa .lbl{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(242,232,208,.78)}
+.reloj-nota{margin:0;max-width:46ch;color:var(--muted)}
+.reloj-dia{display:grid;justify-items:center;gap:10px;width:100%;padding:clamp(26px,5vw,48px) clamp(18px,4vw,40px);border-radius:12px;
+  background:linear-gradient(180deg,#9a2e22,var(--lacquer-deep));
+  box-shadow:inset 0 0 0 2px rgba(228,187,106,.6), inset 0 0 0 8px #7e2219, inset 0 0 0 9px rgba(228,187,106,.3), 0 30px 60px -26px rgba(0,0,0,.9);
+  animation:aparecer .6s cubic-bezier(.2,.8,.2,1)}
+@keyframes aparecer{from{opacity:0;transform:translateY(10px)}}
+.reloj-dia .hz{font-family:var(--f-brush);font-size:clamp(2.4rem,8vw,4rem);line-height:1;color:var(--gold)}
+.reloj-dia strong{font-family:var(--f-display);font-weight:800;font-size:clamp(2rem,6vw,3.4rem);line-height:1.1;color:var(--paper);text-wrap:balance}
+.reloj-dia span:last-child{max-width:44ch;color:rgba(242,232,208,.88)}
+
+footer{padding-block:40px 56px;text-align:center;color:var(--muted);font-size:.85rem}
+footer .cjk{display:block;font-family:var(--f-brush);font-size:2rem;color:var(--gold);margin-bottom:6px}
+.secreto{display:grid;place-items:center;margin:24px auto 0;width:48px;height:48px;padding:0;border-radius:50%;cursor:pointer;
+  border:0;color:#f6dc9c;font-family:var(--f-brush);font-size:1.45rem;line-height:1;
+  background:radial-gradient(circle at 35% 30%,#d6584a,#9c2a20 60%,#6e1a13);
+  box-shadow:0 0 0 3px rgba(156,42,32,.5), 0 0 0 5px rgba(228,187,106,.45), 0 8px 18px -6px rgba(0,0,0,.7);
+  animation:brillo 2.6s ease-in-out infinite;transition:transform .2s ease}
+.secreto:hover{transform:scale(1.08) rotate(-6deg)}
+.secreto[aria-expanded="true"]{animation:none}
+@keyframes brillo{50%{box-shadow:0 0 0 3px rgba(156,42,32,.5), 0 0 0 5px rgba(228,187,106,.7), 0 0 26px 6px rgba(228,187,106,.35)}}
+.secreto-pista{display:block;margin-top:8px;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);opacity:.75}
+.nota-secreta{display:grid;gap:4px;max-width:270px;margin:18px auto 0;padding:18px 20px;border-radius:3px;text-align:center;
+  transform:rotate(-3deg);animation:nota .45s cubic-bezier(.2,.8,.2,1)}
+.nota-secreta .ns-de{font-size:.85rem;color:var(--ink-soft)}
+.nota-secreta strong{font-family:var(--f-display);font-weight:800;font-size:2rem;line-height:1.1;color:var(--lacquer-deep)}
+.nota-secreta small{font-size:.78rem;color:var(--ink-soft);font-style:italic}
+@keyframes nota{from{opacity:0;transform:rotate(-3deg) translateY(12px) scale(.9)}}
+
+/* ---------- Sobre de apertura ---------- */
+html.bloqueado{overflow:hidden}
+.sobre-overlay{position:fixed;inset:0;z-index:80;display:grid;place-items:center;align-content:start;gap:clamp(16px,3vh,26px);
+  padding:max(clamp(32px,6vh,64px),env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(24px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+  background:
+    radial-gradient(circle at 50% 14%, rgba(255,232,180,.22), transparent 38%),
+    linear-gradient(180deg,#0a1220 0%,#14223a 38%,#2a1a2c 72%,#3a1712 100%);
+  overflow:hidden;
+  transition:opacity .9s ease, visibility .9s ease}
+.sobre-overlay.salir{opacity:0;visibility:hidden}
+.sobre-overlay > *{position:relative;z-index:1}
+
+/* Escenario del palacio */
+.palacio{position:absolute!important;inset:0;z-index:0!important;pointer-events:none}
+.palacio-estrellas{position:absolute;inset:0;opacity:.7;
+  background-image:
+    radial-gradient(1.2px 1.2px at 12% 18%, #fff4d6, transparent),
+    radial-gradient(1px 1px at 28% 8%, #fff4d6, transparent),
+    radial-gradient(1.4px 1.4px at 44% 22%, #fff4d6, transparent),
+    radial-gradient(1px 1px at 63% 11%, #fff4d6, transparent),
+    radial-gradient(1.3px 1.3px at 78% 25%, #fff4d6, transparent),
+    radial-gradient(1px 1px at 90% 9%, #fff4d6, transparent),
+    radial-gradient(1px 1px at 6% 40%, #fff4d6, transparent),
+    radial-gradient(1.2px 1.2px at 95% 42%, #fff4d6, transparent),
+    radial-gradient(1px 1px at 35% 35%, #fff4d6, transparent),
+    radial-gradient(1px 1px at 70% 38%, #fff4d6, transparent)}
+.palacio-luna{position:absolute;right:20%;top:7%;width:clamp(64px,10vw,140px);aspect-ratio:1;
+  border-radius:50%;background:radial-gradient(circle at 40% 38%,#fff6dc,#f1d595 60%,#d9b56a);
+  box-shadow:0 0 60px 18px rgba(255,226,160,.28), 0 0 160px 60px rgba(255,210,130,.12);opacity:.9}
+.palacio-svg{position:absolute;left:0;right:0;bottom:0;width:100%;height:min(36vh,340px);overflow:visible}
+@media (max-width:560px){ .palacio-luna{right:5%;top:2.5%;opacity:.55} }
+.palacio-marco{position:absolute;inset:clamp(8px,1.6vw,16px);border:1.5px solid rgba(228,187,106,.55);border-radius:4px}
+.palacio-marco::before{content:"";position:absolute;inset:5px;border:1px solid rgba(228,187,106,.25);border-radius:2px}
+.palacio-marco::after{content:"";position:absolute;inset:-5px;
+  background:
+    linear-gradient(var(--gold),var(--gold)) 0 0/14px 14px no-repeat,
+    linear-gradient(var(--gold),var(--gold)) 100% 0/14px 14px no-repeat,
+    linear-gradient(var(--gold),var(--gold)) 0 100%/14px 14px no-repeat,
+    linear-gradient(var(--gold),var(--gold)) 100% 100%/14px 14px no-repeat}
+.palacio-farol{position:absolute;top:0;width:clamp(40px,5.5vw,64px);transform-origin:top center;animation:mecer 5s ease-in-out infinite}
+.palacio-farol.izq{left:clamp(14px,9vw,140px)}
+.palacio-farol.der{right:clamp(14px,9vw,140px);animation-delay:-2.5s}
+.palacio-farol .cuerda{display:block;width:2px;height:clamp(40px,10vh,90px);margin-inline:auto;background:rgba(228,187,106,.7)}
+.palacio-farol .globo{position:relative;display:block;aspect-ratio:1/1.1;border-radius:46%;
+  background:radial-gradient(circle at 50% 45%,#ff9a6a,#d23a2a 55%,#8e1b14);
+  box-shadow:0 0 40px 12px rgba(255,120,70,.35);
+  background-image:radial-gradient(circle at 50% 45%,#ff9a6a,#d23a2a 55%,#8e1b14),
+    repeating-linear-gradient(90deg, transparent 0 22%, rgba(80,10,5,.35) 22% 25%)}
+.palacio-farol .globo::before,.palacio-farol .globo::after{content:"";position:absolute;left:28%;right:28%;height:9%;background:var(--gold);border-radius:2px}
+.palacio-farol .globo::before{top:-4%}
+.palacio-farol .globo::after{bottom:-4%}
+.palacio-farol .borla{display:block;width:5px;height:clamp(18px,3vh,30px);margin:4px auto 0;background:linear-gradient(var(--gold),#c23426);border-radius:0 0 3px 3px}
+@keyframes mecer{50%{transform:rotate(3deg)}}
+
+.sobre-top{display:grid;gap:6px;text-align:center;justify-items:center}
+.sobre-top .cjk{font-family:var(--f-brush);font-size:clamp(1.3rem,3.4vw,1.8rem);color:var(--lacquer);line-height:1;letter-spacing:.2em;
+  text-shadow:0 0 18px rgba(184,57,44,.6)}
+.sobre-top h2{font-family:var(--f-display);font-weight:800;font-size:clamp(2.3rem,7vw,3.8rem);line-height:1.05;color:var(--gold);
+  text-shadow:0 2px 0 #6e4a1a, 0 0 34px rgba(228,187,106,.45)}
+.sobre-top .sub{font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text);opacity:.8}
+.sobre{position:relative;width:min(88vw,440px);aspect-ratio:1.5;max-width:100%;perspective:1200px;cursor:pointer;
+  margin-top:clamp(56px,11vh,120px)}
+.sobre-fondo{position:absolute;inset:0;border-radius:10px;background:linear-gradient(180deg,#0e2622,#163a33);
+  box-shadow:0 40px 80px -30px rgba(0,0,0,.95), 0 0 120px -30px rgba(228,187,106,.35)}
+.sobre-carta{position:absolute;left:6%;right:6%;top:5%;height:90%;z-index:2;border-radius:6px;
+  display:grid;grid-template-columns:auto 1fr;align-items:center;gap:clamp(10px,3vw,18px);padding:clamp(12px,3vw,20px);
+  transition:transform 1.1s cubic-bezier(.2,.8,.2,1)}
+.sobre.carta-fuera .sobre-carta{transform:translateY(-64%)}
+.sobre-carta img{width:clamp(64px,20vw,108px);height:auto;aspect-ratio:1;object-fit:cover;border-radius:50%;border:3px solid var(--gold)}
+.sobre-carta div{min-width:0;display:grid;gap:2px}
+.sobre-carta strong{font-family:var(--f-display);font-weight:800;font-size:clamp(1.25rem,4.6vw,1.8rem);line-height:1.1;color:var(--ink);overflow-wrap:anywhere}
+.sobre-carta small{font-size:.78rem;color:var(--ink-soft)}
+.sobre-frente{position:absolute;inset:0;z-index:3;border-radius:10px;
+  clip-path:polygon(0 0,50% 56%,100% 0,100% 100%,0 100%);
+  background:
+    radial-gradient(circle at 20% 80%, rgba(228,187,106,.10) 0 2px, transparent 2.5px) 0 0/18px 18px,
+    linear-gradient(170deg,#3a8166,#245a4a 70%,#1d4a3d)}
+.sobre-frente::before{content:"";position:absolute;inset:9px;border:1.5px solid rgba(228,187,106,.7);border-radius:6px}
+.sobre-dir{position:absolute;left:9%;right:9%;bottom:11%;z-index:3;display:grid;gap:2px;pointer-events:none}
+.sobre-dir .para{font-family:var(--f-display);font-weight:800;font-size:clamp(1.15rem,4.2vw,1.6rem);color:var(--paper);line-height:1.2;overflow-wrap:anywhere}
+.sobre-dir .de{font-size:clamp(.6rem,1.9vw,.72rem);letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.sobre-dir .vert{position:absolute;right:0;bottom:0;writing-mode:vertical-rl;font-family:var(--f-brush);font-size:clamp(1rem,3.4vw,1.4rem);color:var(--gold);opacity:.85}
+.sobre-solapa{position:absolute;left:0;right:0;top:0;height:60%;z-index:4;transform-origin:top center;
+  filter:drop-shadow(0 3px 0 var(--gold)) drop-shadow(0 8px 10px rgba(0,0,0,.35));
+  transition:transform .75s cubic-bezier(.4,0,.2,1), z-index 0s linear .38s}
+.sobre-solapa i{position:absolute;inset:0;border-radius:10px 10px 0 0;clip-path:polygon(0 0,100% 0,50% 100%);
+  background:linear-gradient(180deg,#c8473a,var(--lacquer) 45%,var(--lacquer-deep))}
+.sobre.abierto .sobre-solapa{transform:rotateX(180deg);z-index:1}
+.sobre-sello{position:absolute;left:50%;top:60%;z-index:5;width:clamp(64px,17vw,84px);aspect-ratio:1;margin:0;padding:0;border:0;cursor:pointer;
+  transform:translate(-50%,-50%);border-radius:50%;display:grid;place-items:center;
+  font-family:var(--f-brush);font-size:clamp(1.3rem,4vw,1.7rem);line-height:.9;writing-mode:vertical-rl;color:#f6dc9c;
+  background:radial-gradient(circle at 35% 30%,#d6584a,#9c2a20 60%,#6e1a13);
+  box-shadow:0 0 0 4px rgba(156,42,32,.55), 0 0 0 7px rgba(228,187,106,.35), 0 10px 22px -6px rgba(0,0,0,.7);
+  animation:latido 2.2s ease-in-out infinite;transition:opacity .35s ease, transform .35s ease}
+@keyframes latido{50%{transform:translate(-50%,-50%) scale(1.07)}}
+.sobre.abierto .sobre-sello{opacity:0;transform:translate(-50%,-50%) scale(.6);animation:none;pointer-events:none}
+.sobre-hint{margin:0;text-align:center;color:var(--text);font-size:.92rem;display:grid;gap:2px;text-shadow:0 1px 8px #000, 0 0 2px #000}
+.sobre-hint b{color:var(--text);font-weight:700}
+
+/* Botón de música */
+.musica-btn{position:fixed;z-index:70;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));
+  width:54px;height:54px;border-radius:50%;border:0;cursor:pointer;display:grid;place-items:center;
+  background:var(--lacquer);color:var(--paper);
+  box-shadow:0 12px 26px -8px rgba(0,0,0,.75), inset 0 0 0 2px rgba(228,187,106,.55);transition:transform .18s ease}
+.musica-btn:active{transform:scale(.94)}
+.barras{display:flex;align-items:flex-end;gap:3px;height:20px}
+.barras i{width:3.5px;height:35%;border-radius:2px;background:currentColor;animation:barra 1s ease-in-out infinite}
+.barras i:nth-child(2){animation-delay:-.35s}
+.barras i:nth-child(3){animation-delay:-.7s}
+.barras i:nth-child(4){animation-delay:-.2s}
+@keyframes barra{50%{height:100%}}
+.musica-btn[aria-pressed="false"] .barras i{animation:none;height:35%}
+.musica-btn[aria-pressed="false"]{background:var(--wood-2)}
+
+/* ---------- Responsive ---------- */
+@media (max-width:860px){
+  .hero .col{grid-template-columns:1fr}
+  .puerta{order:-1;width:min(78%,320px)}
+  .vertical{display:none}
+  .botica{grid-template-columns:1fr}
+  .rollos{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:680px){
+  .exp-dl{grid-template-columns:1fr}
+  .exp-dl dt{border-bottom:0;padding-bottom:0}
+  .exp-dl dd{padding-top:2px;padding-right:0}
+  .estampa{position:relative;top:auto;right:auto;margin:18px 0 0 auto;width:96px;font-size:1.7rem}
+  .expediente{transform:none}
+}
+@media (max-width:560px){
+  .cajones{grid-template-columns:repeat(3,1fr)}
+  .cajon .hz{font-size:1.5rem}
+  .cajon .nm{font-size:.66rem}
+  .exp-dl{grid-template-columns:1fr}
+  .exp-dl dt{border-bottom:0;padding-bottom:0}
+  .exp-dl dd{padding-top:2px;padding-right:0}
+  .estampa{position:relative;top:auto;right:auto;margin:18px 0 0 auto;width:96px;font-size:1.7rem}
+  .expediente{transform:none}
+  .placa .lbl{font-size:.6rem;letter-spacing:.08em}
+  .placa .hz{font-size:1.15rem}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="cielo" aria-hidden="true"></div>
+<canvas id="sky" aria-hidden="true"></canvas>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<!-- Sobre de apertura -->
+<div class="sobre-overlay" id="sobre-overlay" role="dialog" aria-modal="true" aria-labelledby="sobre-titulo">
+  <div class="palacio" aria-hidden="true">
+    <div class="palacio-estrellas"></div>
+    <div class="palacio-luna"></div>
+    <svg class="palacio-svg" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMax meet">
+      <defs>
+        <linearGradient id="pz-techo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a3b36"/><stop offset="1" stop-color="#121c1a"/></linearGradient>
+        <linearGradient id="pz-muro" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8e2a1e"/><stop offset="1" stop-color="#4e140e"/></linearGradient>
+        <g id="pz-salon">
+          <rect x="70" y="232" width="460" height="100" fill="url(#pz-muro)"/>
+          <g fill="#f2b45a" opacity=".75">
+            <rect x="110" y="258" width="60" height="50" rx="3"/><rect x="200" y="258" width="60" height="50" rx="3"/>
+            <rect x="340" y="258" width="60" height="50" rx="3"/><rect x="430" y="258" width="60" height="50" rx="3"/>
+          </g>
+          <rect x="275" y="250" width="50" height="82" fill="#2a120c"/>
+          <g fill="#5a1610"><rect x="88" y="236" width="10" height="96"/><rect x="180" y="236" width="10" height="96"/><rect x="410" y="236" width="10" height="96"/><rect x="502" y="236" width="10" height="96"/></g>
+          <path d="M10 240 C60 236 80 224 100 206 L500 206 C520 224 540 236 590 240 L560 246 L40 246 Z" fill="url(#pz-techo)" stroke="#e4bb6a" stroke-width="2.5"/>
+          <rect x="140" y="156" width="320" height="52" fill="url(#pz-muro)"/>
+          <g fill="#f2b45a" opacity=".6"><rect x="170" y="170" width="40" height="28" rx="2"/><rect x="280" y="170" width="40" height="28" rx="2"/><rect x="390" y="170" width="40" height="28" rx="2"/></g>
+          <path d="M80 162 C130 158 150 144 170 118 L430 118 C450 144 470 158 520 162 L490 168 L110 168 Z" fill="url(#pz-techo)" stroke="#e4bb6a" stroke-width="2.5"/>
+          <rect x="180" y="106" width="240" height="14" rx="3" fill="#121c1a" stroke="#e4bb6a" stroke-width="2"/>
+          <path d="M172 112 l-14 -14 l20 6 Z M428 112 l14 -14 l-20 6 Z" fill="#e4bb6a"/>
+          <rect x="40" y="332" width="520" height="16" fill="#3b2a22"/><rect x="20" y="348" width="560" height="52" fill="#2b1f19"/>
+        </g>
+      </defs>
+      <rect x="-3000" y="318" width="7200" height="300" fill="#3a110c"/>
+      <rect x="-3000" y="306" width="7200" height="14" fill="#16211e" stroke="#e4bb6a" stroke-width="1.5"/>
+      <use href="#pz-salon" transform="translate(-60 150) scale(.55)"/>
+      <use href="#pz-salon" transform="translate(930 150) scale(.55)"/>
+      <use href="#pz-salon" transform="translate(300 0)"/>
+    </svg>
+    <div class="palacio-farol izq"><span class="cuerda"></span><span class="globo"></span><span class="borla"></span></div>
+    <div class="palacio-farol der"><span class="cuerda"></span><span class="globo"></span><span class="borla"></span></div>
+    <div class="palacio-marco"></div>
+  </div>
+  <div class="sobre-top">
+    <span class="cjk" aria-hidden="true">生辰快乐</span>
+    <h2 id="sobre-titulo">Feliz 15 años</h2>
+    <span class="sub">Una carta del Palacio Interior</span>
+  </div>
+  <div class="sobre" id="sobre">
+    <div class="sobre-fondo"></div>
+    <div class="sobre-carta papel">
+      <img src="img/maomao-orgullosa.jpg" alt="" width="720" height="705">
+      <div><strong>Feliz 15, <span data-nombre>María</span></strong><small>Abriendo la botica…</small></div>
+    </div>
+    <div class="sobre-frente"></div>
+    <div class="sobre-dir">
+      <span class="de">Para</span>
+      <span class="para" data-nombre>María</span>
+      <span class="de">De parte de Maomao · Palacio Interior</span>
+      <span class="vert" aria-hidden="true">药房</span>
+    </div>
+    <div class="sobre-solapa"><i></i></div>
+    <button class="sobre-sello" id="sello" type="button" aria-label="Abrir el sobre">十五</button>
+  </div>
+  <p class="sobre-hint"><b>Toca el sello para abrir</b><span>Sube el volumen: tiene música</span></p>
+</div>
+
+<audio id="musica" src="musica/cancion.mp3" loop preload="auto"></audio>
+<button class="musica-btn" id="musica-btn" type="button" aria-pressed="true" aria-label="Pausar música" hidden>
+  <span class="barras" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+</button>
+
+<div class="wrap">
+  <!-- Portada -->
+  <header class="hero">
+    <div class="col">
+      <div class="hero-text">
+        <p class="eyebrow"><span class="cjk">后宫药房</span>Botica del Palacio Interior · Receta n.º 15</p>
+        <h1><span class="a">Feliz 15,</span><span class="b" data-nombre>María</span></h1>
+        <p class="lede">Maomao, la boticaria del palacio, te preparó algo especial: un gabinete con quince remedios, uno por cada año que has llenado de luz.</p>
+        <div class="acciones">
+          <button class="btn btn-main" type="button" data-ir="gabinete">Abrir el gabinete</button>
+          <button class="btn btn-ghost" type="button" data-ir="carta">Leer la carta</button>
+        </div>
+      </div>
+      <div class="puerta">
+        <div class="luna"><img src="img/maomao-orgullosa.jpg" alt="Maomao en versión chibi, con orejas de gato, sonriendo orgullosa con los puños apretados" width="720" height="705"></div>
+        <div class="sello" aria-label="Quince">十五</div>
+      </div>
+      <span class="vertical" aria-hidden="true">生辰快乐</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- Expediente -->
+    <section id="expediente">
+      <div class="col">
+        <div class="head">
+          <p class="eyebrow"><span class="cjk">病历</span>Expediente médico</p>
+          <h2>Maomao ya te revisó</h2>
+          <p>Maomao no confía en nada sin probarlo primero. Esto es lo que encontró.</p>
+        </div>
+        <article class="expediente papel">
+          <div class="exp-top">
+            <h3>Informe de Maomao</h3>
+            <span>Caso n.º 15 · Palacio Interior</span>
+          </div>
+          <dl class="exp-dl">
+            <dt>Paciente</dt><dd data-nombre>María</dd>
+            <dt>Edad</dt><dd>15 años recién cumplidos</dd>
+            <dt>Lo que notó</dt><dd>Risa contagiosa, curiosidad sin remedio y un brillo en los ojos que ninguna hierba explica.</dd>
+            <dt>Prueba de veneno</dt><dd>Maomao probó tu pastel. Dos veces, por si acaso. Resultado: <strong>solo azúcar y cariño.</strong></dd>
+            <dt>Conclusión</dt><dd><strong>Caso grave de ser increíble.</strong> Lo anotó tres veces para estar segura.</dd>
+            <dt>Indicaciones</dt><dd>Reír mucho, comer pastel sin culpa y bailar hasta que se apaguen los farolillos.</dd>
+            <dt>Advertencia</dt><dd>Contagia alegría a todo el que esté cerca. No intentar evitarlo.</dd>
+          </dl>
+          <div class="estampa" aria-label="Sello: sin cura conocida"><span>无</span><span>药</span><span>可</span><span>医</span><small>Sin cura conocida</small></div>
+          <p class="firma"><span class="firma-cjk" aria-hidden="true">猫猫</span><span>Maomao, boticaria del Palacio Interior</span></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Gabinete -->
+    <section id="gabinete">
+      <div class="col">
+        <div class="head">
+          <p class="eyebrow"><span class="cjk">百子柜</span>El gabinete de hierbas</p>
+          <h2>Quince cajones, quince deseos</h2>
+          <p>Cada cajón guarda una hierba de verdad y lo que significa para tus 15 años. Ábrelos todos.</p>
+        </div>
+        <div class="botica">
+          <div class="mueble">
+            <div class="corona"><span class="cjk" aria-hidden="true">百子柜</span><span class="contador" id="contador">0 de 15 abiertos</span></div>
+            <div class="cajones" id="cajones" role="group" aria-label="Cajones del gabinete"></div>
+          </div>
+          <article class="receta papel" id="receta" aria-live="polite">
+            <div class="grande" id="r-hz" aria-hidden="true">药</div>
+            <h3 id="r-nm">Elige un cajón</h3>
+            <p class="prop" id="r-prop">Receta para unos quince felices</p>
+            <p class="deseo" id="r-deseo">Toca cualquier cajón del gabinete. Cada uno tiene una hierba que Maomao escogió para ti, con su propiedad y un deseo.</p>
+            <div class="barra" id="barra" aria-hidden="true"></div>
+            <p class="nota">Probado personalmente por Maomao. No es veneno, es cariño.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Rollos -->
+    <section id="archivo">
+      <div class="col">
+        <div class="head">
+          <p class="eyebrow"><span class="cjk">画卷</span>Archivo de Maomao</p>
+          <h2>Pruebas recolectadas</h2>
+          <p>Evidencia de que hoy es un día muy importante.</p>
+        </div>
+        <div class="rollos">
+          <figure class="rollo papel"><img src="img/maomao-orgullosa.jpg" alt="Maomao chibi sonriendo con orgullo" loading="lazy" width="720" height="705"><figcaption>Oficialmente quinceañera. Y lo sabe.</figcaption></figure>
+          <figure class="rollo papel"><img src="img/maomao-brillos.jpg" alt="Maomao emocionada rodeada de brillos y luces rosadas" loading="lazy" width="720" height="720"><figcaption>Cuando ve entrar el pastel.</figcaption></figure>
+          <figure class="rollo papel"><img src="img/maomao-gato.jpg" alt="Maomao con orejas de gato mirando con desconfianza detrás de sus mangas" loading="lazy" width="528" height="528"><figcaption>Cuando le dicen «ya estás grande» por décima vez.</figcaption></figure>
+          <figure class="rollo papel"><img src="img/maomao-jinshi.jpg" alt="Jinshi sonriendo mientras Maomao se espanta" loading="lazy" width="720" height="720"><figcaption>Cuando te quiere tocar la rata blanca.</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- Carta -->
+    <section id="carta">
+      <div class="col">
+        <div class="head">
+          <p class="eyebrow"><span class="cjk">书信</span>Una carta para ti</p>
+          <h2>Escrita en papel de la botica</h2>
+        </div>
+        <article class="carta papel">
+          <p class="saludo">Querida <span data-nombre>María</span>:</p>
+          <p>Quince años no se cumplen todos los días. Hoy empieza una etapa llena de primeras veces, y ojalá la vivas como Maomao vive cada misterio: con curiosidad, con valentía y sin dejar que nadie te diga lo que puedes o no puedes hacer.</p>
+          <p>Que nunca te falte gente que te cuide, motivos para reírte y alguien que te recuerde lo especial que eres. Y si algún día algo sabe amargo, ya sabes que Maomao siempre tiene un remedio guardado.</p>
+          <p class="despedida">Con mucho cariño,<strong data-de>Tu cuñado</strong></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Cuenta regresiva -->
+    <section id="cuenta">
+      <div class="col">
+        <div class="head">
+          <p class="eyebrow"><span class="cjk">倒计时</span>Cuenta regresiva</p>
+          <h2>Ya casi llegan tus 15</h2>
+          <p>El reloj de agua del palacio ya empezó a contar. Maomao tiene todo listo.</p>
+        </div>
+        <div class="reloj">
+          <p class="reloj-fecha"><span class="cjk" aria-hidden="true">十一月九日</span>9 de noviembre</p>
+          <div class="placas" id="placas" role="timer" aria-label="Tiempo que falta para el cumpleaños">
+            <div class="placa"><span class="hz" aria-hidden="true">天</span><span class="num" id="c-d">00</span><span class="lbl">Días</span></div>
+            <div class="placa"><span class="hz" aria-hidden="true">时</span><span class="num" id="c-h">00</span><span class="lbl">Horas</span></div>
+            <div class="placa"><span class="hz" aria-hidden="true">分</span><span class="num" id="c-m">00</span><span class="lbl">Minutos</span></div>
+            <div class="placa"><span class="hz" aria-hidden="true">秒</span><span class="num" id="c-s">00</span><span class="lbl">Segundos</span></div>
+          </div>
+          <div class="reloj-dia" id="reloj-dia" hidden>
+            <span class="hz" aria-hidden="true">生辰快乐</span>
+            <strong id="dia-tit">¡Hoy es el día!</strong>
+            <span id="dia-txt">Feliz cumpleaños número 15. Todo el palacio celebra contigo.</span>
+          </div>
+          <p class="reloj-nota" id="reloj-nota">Cuando llegue a cero, el palacio entero va a celebrar contigo.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span class="cjk" aria-hidden="true">生辰快乐</span>
+    Hecho con cariño para <span data-nombre>María</span> · Inspirado en <em>El diario de la boticaria</em>
+    <button class="secreto" id="secreto" type="button" aria-expanded="false" aria-controls="nota-secreta" aria-label="Nota secreta">秘</button>
+    <span class="secreto-pista" aria-hidden="true">Nota secreta</span>
+    <div class="nota-secreta papel" id="nota-secreta" hidden>
+      <span class="ns-de">Nota secreta de parte de tu hermana:</span>
+      <strong>¡Báñate!</strong>
+      <small>Maomao también lo recomienda.</small>
+    </div>
+  </footer>
+</div>
+
+<script>
+/* ====== Personaliza aquí ====== */
+const CONFIG = {
+  nombre: "María",   // nombre de la quinceañera
+  de: "Tu cuñado"          // quién firma la carta
+};
+/* También funciona con el enlace terminado en #Nombre (sin acentos), por ejemplo #Valentina */
+
+(function(){
+  try{
+    const h = decodeURIComponent(location.hash.slice(1));
+    if (h && /^[A-Za-z0-9-]{2,40}$/.test(h) && !document.getElementById(h)) CONFIG.nombre = h.replace(/-/g," ");
+  }catch(e){}
+  document.querySelectorAll("[data-nombre]").forEach(el => el.textContent = CONFIG.nombre);
+  document.querySelectorAll("[data-de]").forEach(el => el.textContent = CONFIG.de);
+  document.title = "Feliz 15, " + CONFIG.nombre;
+})();
+
+const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* Botones de navegación */
+document.querySelectorAll("[data-ir]").forEach(b => b.addEventListener("click", () => {
+  document.getElementById(b.dataset.ir).scrollIntoView({behavior: reduce ? "auto" : "smooth", block: "start"});
+}));
+
+/* ====== Cielo con farolillos ====== */
+const sky = (() => {
+  const c = document.getElementById("sky"), x = c.getContext("2d");
+  let W = 0, H = 0, L = [], S = [], extra = [];
+  function rnd(a, b){ return a + Math.random() * (b - a); }
+  function mk(init, big){
+    const z = big ? 1 : Math.random();
+    return { x: rnd(0, W), y: init ? rnd(0, H) : H + 50, s: big ? 24 : 5 + z * 13, v: big ? 1.1 : .12 + z * .32,
+             ph: rnd(0, 6.28), a: big ? 1 : .3 + z * .6, fl: rnd(0, 6.28), big: !!big };
+  }
+  function size(){
+    const d = Math.min(window.devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight;
+    c.width = W * d; c.height = H * d; x.setTransform(d, 0, 0, d, 0, 0);
+    const n = W < 600 ? 12 : 22;
+    L = Array.from({length: n}, () => mk(true)).sort((a, b) => a.s - b.s);
+    S = Array.from({length: W < 600 ? 50 : 90}, () => ({ x: rnd(0, W), y: rnd(0, H * .7), r: rnd(.4, 1.3), ph: rnd(0, 6.28) }));
+  }
+  function lantern(l, t){
+    const X = l.x + Math.sin(t * .0006 + l.ph) * l.s * .9, Y = l.y;
+    const fl = .85 + .15 * Math.sin(t * .004 + l.fl);
+    const w = l.s, h = l.s * 1.25, R = l.s * 3.2;
+    const g = x.createRadialGradient(X, Y, 0, X, Y, R);
+    g.addColorStop(0, `rgba(255,180,90,${.34 * l.a * fl})`); g.addColorStop(1, "rgba(255,140,60,0)");
+    x.fillStyle = g; x.beginPath(); x.arc(X, Y, R, 0, 6.283); x.fill();
+    const b = x.createLinearGradient(X, Y - h / 2, X, Y + h / 2);
+    b.addColorStop(0, `rgba(255,228,155,${l.a})`); b.addColorStop(1, `rgba(226,104,44,${l.a})`);
+    x.fillStyle = b; x.beginPath();
+    x.moveTo(X - w * .42, Y - h / 2); x.lineTo(X + w * .42, Y - h / 2);
+    x.quadraticCurveTo(X + w * .66, Y, X + w * .48, Y + h / 2); x.lineTo(X - w * .48, Y + h / 2);
+    x.quadraticCurveTo(X - w * .66, Y, X - w * .42, Y - h / 2); x.fill();
+    x.fillStyle = `rgba(255,246,210,${.85 * l.a * fl})`;
+    x.beginPath(); x.ellipse(X, Y + h / 2, w * .32, w * .08, 0, 0, 6.283); x.fill();
+  }
+  function frame(t){
+    x.clearRect(0, 0, W, H);
+    for (const s of S){ x.fillStyle = `rgba(255,244,214,${.35 + .35 * Math.sin(t * .0015 + s.ph)})`; x.beginPath(); x.arc(s.x, s.y, s.r, 0, 6.283); x.fill(); }
+    for (let i = 0; i < L.length; i++){
+      const l = L[i]; if (!reduce) l.y -= l.v;
+      if (l.y < -60){ const n = mk(false); n.s = l.s; n.v = l.v; n.a = l.a; L[i] = n; }
+      lantern(L[i], t);
+    }
+    for (let i = extra.length - 1; i >= 0; i--){
+      const l = extra[i]; l.y -= l.v; l.s *= .9985; lantern(l, t);
+      if (l.y < -80) extra.splice(i, 1);
+    }
+    if (!reduce || extra.length) requestAnimationFrame(frame);
+  }
+  size(); addEventListener("resize", () => { size(); if (reduce) frame(0); });
+  requestAnimationFrame(frame);
+  return { add(px){ const l = mk(false, true); l.x = px ?? W / 2; extra.push(l); if (reduce) requestAnimationFrame(frame); } };
+})();
+
+/* ====== Pétalos (celebración) ====== */
+const fx = (() => {
+  const c = document.getElementById("fx"), x = c.getContext("2d");
+  let P = [], running = false, W = 0, H = 0;
+  function size(){ const d = Math.min(window.devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight; c.width = W * d; c.height = H * d; x.setTransform(d, 0, 0, d, 0, 0); }
+  size(); addEventListener("resize", size);
+  const cols = ["#f4b6c2", "#f7d0d8", "#e4bb6a", "#ffffff", "#e98aa0"];
+  function petal(p){
+    x.save(); x.translate(p.x, p.y); x.rotate(p.r); x.globalAlpha = Math.min(1, p.life / 40);
+    x.fillStyle = p.c; x.beginPath(); x.ellipse(0, 0, p.s, p.s * .58, 0, 0, 6.283); x.fill(); x.restore();
+  }
+  function tick(){
+    x.clearRect(0, 0, W, H);
+    P = P.filter(p => p.life > 0);
+    for (const p of P){ p.vy += .06; p.vx *= .99; p.x += p.vx + Math.sin(p.life * .05) * .6; p.y += p.vy; p.r += p.vr; p.life--; petal(p); }
+    if (P.length) requestAnimationFrame(tick); else { running = false; x.clearRect(0, 0, W, H); }
+  }
+  return { burst(px, py, n = 40){
+    if (reduce) return;
+    for (let i = 0; i < n; i++){
+      const a = Math.random() * Math.PI * 2, sp = 2 + Math.random() * 5;
+      P.push({ x: px, y: py, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 3, r: Math.random() * 6, vr: (Math.random() - .5) * .2,
+               s: 4 + Math.random() * 5, c: cols[i % cols.length], life: 90 + Math.random() * 70 });
+    }
+    if (!running){ running = true; requestAnimationFrame(tick); }
+  }};
+})();
+
+/* ====== Gabinete de 15 cajones ====== */
+const REMEDIOS = [
+  { hz:"甘草", nm:"Regaliz", prop:"Endulza lo amargo", d:"Para que la vida te endulce incluso los días que saben raro." },
+  { hz:"菊花", nm:"Crisantemo", prop:"Aclara la vista", d:"Claridad para elegir tu propio camino, aunque otros opinen distinto." },
+  { hz:"枸杞", nm:"Goji", prop:"Da energía", d:"Energía de sobra para todo lo que te propongas este año." },
+  { hz:"人参", nm:"Ginseng", prop:"Fortalece", d:"Fuerza para cuando algo cueste. Puedes con mucho más de lo que crees." },
+  { hz:"薄荷", nm:"Menta", prop:"Refresca", d:"Calma y aire fresco cuando todo vaya demasiado rápido." },
+  { hz:"肉桂", nm:"Canela", prop:"Da calor", d:"El calor de la gente que te quiere, siempre cerca de ti." },
+  { hz:"莲子", nm:"Loto", prop:"Florece en el lodo", d:"Que florezcas bonita incluso cuando el terreno se ponga difícil." },
+  { hz:"陈皮", nm:"Mandarina", prop:"Mejora con los años", d:"Como la buena piel de mandarina seca: cada año que pasa, mejor." },
+  { hz:"当归", nm:"Angélica", prop:"Cuida y protege", d:"Que te cuides con el mismo cariño con el que cuidas a los demás." },
+  { hz:"红花", nm:"Cártamo", prop:"Aviva el corazón", d:"Pasión por lo que te gusta, sin pedirle permiso a nadie." },
+  { hz:"茉莉", nm:"Jazmín", prop:"Perfuma", d:"Que tus días huelan a cosas buenas: pan dulce, flores y fiesta." },
+  { hz:"桃仁", nm:"Durazno", prop:"Larga vida", d:"En el palacio, el durazno significa larga vida. Que cumplas muchísimos más." },
+  { hz:"蜂蜜", nm:"Miel", prop:"Suaviza", d:"Amistades dulces y sinceras que te acompañen siempre." },
+  { hz:"牡丹", nm:"Peonía", prop:"Reina de las flores", d:"Para la reina de esta fiesta. Hoy todo gira alrededor de ti." },
+  { hz:"梅花", nm:"Ciruelo", prop:"Florece en invierno", d:"Valiente cuando haga frío: las flores más fuertes salen en invierno." }
+];
+const KEY = "botica15-abiertos";
+let abiertos = new Set();
+try { abiertos = new Set(JSON.parse(localStorage.getItem(KEY) || "[]")); } catch(e){}
+
+const grid = document.getElementById("cajones");
+const barra = document.getElementById("barra");
+const contador = document.getElementById("contador");
+const receta = document.getElementById("receta");
+const r = { hz: document.getElementById("r-hz"), nm: document.getElementById("r-nm"), prop: document.getElementById("r-prop"), d: document.getElementById("r-deseo") };
+
+REMEDIOS.forEach((m, i) => {
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "cajon"; b.id = "cajon-" + i;
+  b.setAttribute("aria-pressed", abiertos.has(i) ? "true" : "false");
+  b.setAttribute("aria-label", `Cajón ${i + 1}: ${m.nm}`);
+  b.innerHTML = `<span class="etq"><span class="hz">${m.hz}</span><span class="nm">${m.nm}</span></span>`;
+  b.addEventListener("click", () => abrir(i, b));
+  grid.appendChild(b);
+  barra.appendChild(document.createElement("i"));
+});
+
+function pintarProgreso(){
+  const n = abiertos.size;
+  contador.textContent = `${n} de 15 abiertos`;
+  [...barra.children].forEach((el, i) => el.classList.toggle("on", i < n));
+}
+
+function abrir(i, btn){
+  const m = REMEDIOS[i];
+  const nuevo = !abiertos.has(i);
+  abiertos.add(i);
+  try { localStorage.setItem(KEY, JSON.stringify([...abiertos])); } catch(e){}
+  grid.querySelectorAll(".cajon").forEach(c => c.classList.remove("actual"));
+  btn.setAttribute("aria-pressed", "true"); btn.classList.add("actual");
+  pintarProgreso();
+
+  if (abiertos.size === 15 && nuevo){
+    r.hz.textContent = "寿";
+    r.nm.textContent = "¡Receta completa!";
+    r.prop.textContent = "15 remedios · 15 deseos";
+    r.d.textContent = `Conclusión final de Maomao: ${CONFIG.nombre} no necesita ninguna cura. Solo una gran fiesta y un año precioso por delante. ¡Feliz cumpleaños!`;
+    receta.classList.add("completa");
+    const rc = receta.getBoundingClientRect();
+    fx.burst(rc.left + rc.width / 2, rc.top + 60, 110);
+    sky.add(rc.left + rc.width / 2);
+    return;
+  }
+  r.hz.textContent = m.hz;
+  r.nm.textContent = m.nm;
+  r.prop.textContent = "Propiedad: " + m.prop;
+  r.d.textContent = m.d;
+  if (nuevo){ const rc = btn.getBoundingClientRect(); fx.burst(rc.left + rc.width / 2, rc.top + rc.height / 2, 18); }
+  if (innerWidth <= 860) receta.scrollIntoView({behavior: reduce ? "auto" : "smooth", block: "nearest"});
+}
+pintarProgreso();
+if (abiertos.size === 15) receta.classList.add("completa");
+
+/* ====== Cuenta regresiva ====== */
+const CUMPLE = new Date(2026, 10, 9, 0, 0, 0);   // 9 de noviembre de 2026, 00:00 (hora de quien abre la página)
+const FIN_DIA = new Date(2026, 10, 10, 0, 0, 0);
+const cEls = { d: document.getElementById("c-d"), h: document.getElementById("c-h"), m: document.getElementById("c-m"), s: document.getElementById("c-s") };
+const placas = document.getElementById("placas");
+const relojDia = document.getElementById("reloj-dia");
+const relojNota = document.getElementById("reloj-nota");
+let enDia = false, celebrado = false, cuentaVisible = false;
+
+function dos(n){ return String(n).padStart(2, "0"); }
+function poner(el, v){
+  if (el.textContent === v) return;
+  el.textContent = v;
+  el.classList.remove("tic"); void el.offsetWidth; el.classList.add("tic");
+}
+function celebrar(){
+  if (celebrado || !enDia || !cuentaVisible) return;
+  celebrado = true;
+  const rc = relojDia.getBoundingClientRect();
+  fx.burst(rc.left + rc.width / 2, rc.top + 40, 120);
+  sky.add(rc.left + rc.width * .3); sky.add(rc.left + rc.width * .7);
+}
+function tickCuenta(){
+  const ahora = new Date();
+  const ms = CUMPLE - ahora;
+  if (ms > 0){
+    const t = Math.floor(ms / 1000);
+    const d = Math.floor(t / 86400), h = Math.floor(t % 86400 / 3600), m = Math.floor(t % 3600 / 60), s = t % 60;
+    poner(cEls.d, dos(d)); poner(cEls.h, dos(h)); poner(cEls.m, dos(m)); poner(cEls.s, dos(s));
+    placas.setAttribute("aria-label", `Faltan ${d} días, ${h} horas y ${m} minutos para el cumpleaños`);
+    return;
+  }
+  if (!enDia){
+    enDia = true;
+    placas.hidden = true; relojNota.hidden = true; relojDia.hidden = false;
+  }
+  if (ahora >= FIN_DIA){
+    document.getElementById("dia-tit").textContent = `¡Ya tienes 15, ${CONFIG.nombre}!`;
+    document.getElementById("dia-txt").textContent = "Que este año nuevo sea el más bonito de todos. El palacio sigue celebrando.";
+  } else {
+    document.getElementById("dia-tit").textContent = "¡Hoy es el día!";
+    document.getElementById("dia-txt").textContent = `Feliz cumpleaños número 15, ${CONFIG.nombre}. Todo el palacio celebra contigo.`;
+  }
+  celebrar();
+}
+if ("IntersectionObserver" in window){
+  new IntersectionObserver(es => { cuentaVisible = es[0].isIntersecting; celebrar(); }, { threshold: .4 })
+    .observe(document.getElementById("cuenta"));
+} else { cuentaVisible = true; }
+tickCuenta();
+setInterval(tickCuenta, 1000);
+
+/* ====== Nota secreta ====== */
+const secreto = document.getElementById("secreto");
+const notaSecreta = document.getElementById("nota-secreta");
+secreto.addEventListener("click", () => {
+  const abrir = notaSecreta.hidden;
+  notaSecreta.hidden = !abrir;
+  secreto.setAttribute("aria-expanded", String(abrir));
+  if (abrir){
+    const rc = secreto.getBoundingClientRect();
+    fx.burst(rc.left + rc.width / 2, rc.top, 30);
+    notaSecreta.scrollIntoView({behavior: reduce ? "auto" : "smooth", block: "nearest"});
+  }
+});
+
+/* ====== Sobre + música ====== */
+const musica = document.getElementById("musica");
+const mBtn = document.getElementById("musica-btn");
+const overlay = document.getElementById("sobre-overlay");
+const sobre = document.getElementById("sobre");
+const sello = document.getElementById("sello");
+let hayMusica = true, abierto = false, fadeT = null;
+
+musica.addEventListener("error", () => { hayMusica = false; mBtn.hidden = true; });
+musica.addEventListener("play", () => { mBtn.setAttribute("aria-pressed", "true"); mBtn.setAttribute("aria-label", "Pausar música"); });
+musica.addEventListener("pause", () => { mBtn.setAttribute("aria-pressed", "false"); mBtn.setAttribute("aria-label", "Reproducir música"); });
+
+function sonar(){
+  if (!hayMusica) return;
+  try { musica.volume = 0; } catch(e){}
+  const p = musica.play();
+  if (p && p.catch) p.catch(() => { mBtn.setAttribute("aria-pressed", "false"); });
+  mBtn.hidden = false;
+  let v = 0; clearInterval(fadeT);
+  fadeT = setInterval(() => { v = Math.min(.85, v + .05); try { musica.volume = v; } catch(e){} if (v >= .85) clearInterval(fadeT); }, 120);
+}
+mBtn.addEventListener("click", () => { if (musica.paused) { musica.play().catch(() => {}); } else { musica.pause(); } });
+
+document.documentElement.classList.add("bloqueado");
+function cerrarSobre(){
+  overlay.classList.add("salir");
+  document.documentElement.classList.remove("bloqueado");
+  setTimeout(() => { overlay.hidden = true; }, 950);
+}
+function abrirSobre(){
+  if (abierto) return;
+  abierto = true;
+  sonar();
+  if (reduce){ cerrarSobre(); return; }
+  sobre.classList.add("abierto");
+  const rc = sello.getBoundingClientRect();
+  fx.burst(rc.left + rc.width / 2, rc.top + rc.height / 2, 60);
+  setTimeout(() => sobre.classList.add("carta-fuera"), 520);
+  setTimeout(() => { const r2 = sobre.getBoundingClientRect(); fx.burst(r2.left + r2.width / 2, r2.top, 50); }, 1300);
+  setTimeout(cerrarSobre, 2900);
+}
+sobre.addEventListener("click", abrirSobre);
+sello.focus({preventScroll: true});
+</script>
+</body>
+</html>

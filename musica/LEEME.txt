@@ -1,0 +1,6 @@
+Pon aqui la cancion con este nombre exacto:
+
+    cancion.mp3
+
+(formato MP3, idealmente menos de 10 MB)
+Cuando la pongas, avisale a Claude para publicarla en el enlace.
